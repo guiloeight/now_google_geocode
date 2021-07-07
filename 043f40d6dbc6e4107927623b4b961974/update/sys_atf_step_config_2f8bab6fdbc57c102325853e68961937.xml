@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_atf_step_config">
+    <sys_atf_step_config action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <batch_order_constraint/>
+        <can_mutate_page>false</can_mutate_page>
+        <category/>
+        <class_name/>
+        <class_type>script</class_type>
+        <deprecated>false</deprecated>
+        <description_generator><![CDATA[function generateDescription() {
+    // the global variable 'step' represents the current glide record
+    var description = "";
+	// your code here
+	return description;
+}
+ generateDescription();
+]]></description_generator>
+        <html_description><![CDATA[<p>Testing the Google GeoCode Spoke</p>]]></html_description>
+        <icon>icon-article-document</icon>
+        <inputs/>
+        <name>Google Geocode Call</name>
+        <order>10</order>
+        <outputs/>
+        <step_env display_value="Server - Independent">6c2bcea1870312009dccc9ded0e3ecca</step_env>
+        <step_execution_generator><![CDATA[// The inputs are a map of the variables defined in the inputs related list below.
+// Inputs are consumed in the step configuration. Input
+// values may be hardcoded or mapped from the outputs of a previous step.
+// If a test author using your step uses mapping to pass in an output from a previous 
+// test step then when referencing the input variable the mapping will be resolved 
+// automatically
+//  Example:
+//      var myRecords = new GlideRecord(inputs.table);
+//
+// The outputs are a map of the variables defined in the outputs related list.
+// Outputs should be set (assigned) in order to pass data out of a test step that
+// can be consumed my mapping as an input to subsequent steps. 
+//  Example:
+//      outputs.table = gr.getRecordClassName()
+//
+//
+// Note that inputs and outputs are strongly typed as defined in their variable definition.
+// Their behavior is the same as a dictionary defined field of the same type in a table.
+//
+// The stepResult is a simple API for controlling the step pass/fail and logging with three
+// methods:
+//      stepResult.setFailed: Causes step to fail
+//
+//      stepResult.setSuccess: Causes step to succeed
+//
+//      stepResult.setOutputMessage: Log a message to step results after step executes.
+//            Can only be called once or will overwrite previous 
+//            message
+//
+// If neither setFailed or setSuccess is called the default is to succeed.
+//
+// See 'Record Query' for an example of a scripted step config 
+// or see test 'Check change approvals get generated'
+//
+// Example usage of step timeout in script
+//      var counter = 0;
+//      // 'timeout' is a field on the step form
+//      while (counter <= timeout) {
+//            if (desiredOutcome) {
+//                stepResult.setOutputMessage('Success!');
+//                stepResult.setSuccess();
+//                return;
+//            }
+//            counter++;
+//            gs.sleep(1000);
+//      }
+//
+//      // desired outcome did not occur within the timeout
+//      stepResult.setOutputMessage('Failure!');
+//      stepResult.setFailed();
+//
+(function executeStep(inputs, outputs, stepResult, timeout) {
+	
+	try {
+		var action_inputs = {};
+//		action_inputs['address'] = 'Cherstrasse 4, 8152 Opfikon, Schweiz'; // String 
+		action_inputs['address'] = inputs.u_address;
+
+		// Start Asynchronously: Uncomment to run in background. Code snippet will not have access to outputs.
+		// sn_fd.FlowAPI.getRunner().action('x_snc_google_geoco.get_geolocation').inBackground().withInputs(inputs).run();
+				
+		// Execute Synchronously: Run in foreground. Code snippet has access to outputs.
+		var result = sn_fd.FlowAPI.getRunner().action('x_snc_google_geoco.get_geolocation').inForeground().withInputs(action_inputs).run();
+		var action_outputs = result.getOutputs();
+
+		// Get Outputs:
+		// Note: outputs can only be retrieved when executing synchronously.
+		var loang = action_outputs['loang']; // Floating Point Number
+		var lat = action_outputs['lat']; // Floating Point Number
+		var status = action_outputs['status']; // String
+		stepResult.setOutputMessage('Return values: ' + status + ' ' + loang + ' ' + lat);
+
+		outputs.u_status = status;
+		outputs.u_latitude = lat;
+		outputs.u_longitude = loang;
+		
+		if (status == 'OK') {
+			stepResult.setSuccess();
+		} else {
+			stepResult.setFailed();
+		}
+		
+	} catch (ex) {
+		var message = ex.getMessage();
+		gs.error(message);
+	}
+	
+}(inputs, outputs, stepResult, timeout));
+]]></step_execution_generator>
+        <sys_class_name>sys_atf_step_config</sys_class_name>
+        <sys_created_by>daniel.draes</sys_created_by>
+        <sys_created_on>2021-07-06 06:44:48</sys_created_on>
+        <sys_id>2f8bab6fdbc57c102325853e68961937</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Google Geocode Call</sys_name>
+        <sys_package display_value="Google Geocoding Spoke" source="x_snc_google_geoco">043f40d6dbc6e4107927623b4b961974</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Geocoding Spoke">043f40d6dbc6e4107927623b4b961974</sys_scope>
+        <sys_update_name>sys_atf_step_config_2f8bab6fdbc57c102325853e68961937</sys_update_name>
+        <sys_updated_by>daniel.draes</sys_updated_by>
+        <sys_updated_on>2021-07-06 09:20:46</sys_updated_on>
+        <template_reminder>Template</template_reminder>
+        <type display_value="Test Step" name="sys_atf_step">016742c610462010d15262f9eb11fca1</type>
+        <wizard_redirect/>
+    </sys_atf_step_config>
+    <sys_translated_text action="delete_multiple" query="documentkey=2f8bab6fdbc57c102325853e68961937"/>
+    <sys_variable_value action="delete_multiple" query="document_key=2f8bab6fdbc57c102325853e68961937"/>
+</record_update>
